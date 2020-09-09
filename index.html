@@ -1,73 +1,269 @@
 <!DOCTYPE html>
+
 <html lang="en">
-<head>
-	<title>chatlumb&copy</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style type="text/css">
-		* {
-			overflow: hidden;
-			text-align: center;
-		}
-		input#message {
-			border: 1px solid black;
-			background-color: white;
-			border-radius: 100vw;
-			width: 50vw;
-			color: black;
-		}
-		input#sendMessage {
-			border: transparent;
-			background-color: red;
-			border-radius: 100vw;
-			width: 12.5%;
-			color: white;
-		}
-		ul#messages {
 
-		}
-	</style>
-</head>
-<body>
-  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-database.js"></script>
-  <script type="text/javascript">
-  	var firebaseConfig = {
-  		apiKey: "AIzaSyCWO-Ik0Ttnk-kdmxXcyw3tVa7phql6HoQ",
-  		authDomain: "chatlumb.firebase.com",
-  		databaseURL: "https://chatlumb.firebaseio.com",
-  		projectId: "chatlumb",
-  		storageBucket: "chatlumb.appspot.com",
-  		messagingSenderId: "950288831468",
-  		appId: "1:950288831468:web:15e300db6d80fc8828a6c9"
-  	};
+		<!-- mainTitle -->
+		<title>chatlumb&copy</title>
 
-  	firebase.initializeApp(firebaseConfig);
-  	var myName = prompt("Enter your name");
-  	function sender() {
-  		let message = document.getElementById("message").value;
-  		firebase.database().ref("messages").push().set({
-  			"sender": myName,
-  			"message": message
-  		});
-  		return false;
-  	};
-  	firebase.database().ref("messages").on("child_added", function(snapshot) {
-  		var html = "";
-  		html += "<li>";
-  		html += snapshot.val().sender + ": " 
-  		+ snapshot.val().message;
-  		html += "</li>";
+	<!-- Head -->
+	<head>
 
-  		document.getElementById("messages").innerHTML += html;
-  	});
-  </script>
+		<!-- mainMeta Tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <form onsubmit="return sender()">
-  	<input id="message" placeholder="Enter Your Message" autocomplete="off">
-  	<input id="sendMessage" type="submit">
-  </form>
-  <ul id="messages"></ul>
-</body>
+		<!-- Icons -->
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+		<!-- mainStyle -->
+		<style type="text/css">
+
+			/* Import Roboto Font */
+			@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+			
+			/* Reset */
+			* {
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				margin: 0;
+				font-family: 'Roboto', sans-serif;
+				font-size: 16px;
+				color: #333;
+				outline: none;
+			}
+			body {
+				background-color: #f7f7f7;
+				overflow-x: hidden;
+			}
+			/* Background */
+			main {
+				background-color: #f7f7f7;
+				width: 100%;
+				height: 100%;
+			}
+
+			/* Interface */
+			center {
+				text-align: left;
+			}
+			form {
+				height: 5%;
+				display: flex;
+				position: fixed;
+				bottom: 0;
+				z-index: 1;
+				background-color: #f7f7f7;
+				-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+				box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+
+				-webkit-transition: all 0.25% ease;
+				-o-transition: all 0.25% ease;
+				transition: all 0.25% ease;
+			}
+			ul#messages {
+				height: 100%;	
+				background-color: #f7f7f7;
+				display: inline-block;
+			}
+
+			/* Mensagens */
+			li {	
+				z-index: 0;
+				height: 16px;
+				display: inline-block;
+				padding: 1vh;
+				width: auto;
+				border: none;
+				border-radius: 1vh;
+				text-align: center;
+				color: #fff;
+
+				-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+				box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+
+				-webkit-transition: all 0.25% ease;
+				-o-transition: all 0.25% ease;
+				transition: all 0.25% ease;
+			}
+			.other {
+				background-color: lightgray; color: #333;
+				position: absolute;
+				left: 0;
+			}
+			.my {
+				background-color: purple; color: white;
+				position: absolute;
+				right: 0;
+			}
+
+			/* Patterns */
+			.material {
+				background-color: #fff;
+				border: none;
+				border-radius: 5vh;
+				text-align: center;
+
+				-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+				box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+
+				-webkit-transition: all 0.25% ease;
+				-o-transition: all 0.25% ease;
+				transition: all 0.25% ease;
+			}
+			.botao {
+				background-color: #fff;
+				color: #89428e;
+				width: 10%;
+				right: 0;
+				color: transparent;
+			}
+			.textbox {
+				width: 90%;
+				left: 0;
+				text-align: left;
+				padding: 0 3vh;
+			}
+
+		</style>
+	</head>
+
+		<main>
+
+			<center>
+				
+				<!-- Chat Form -->
+			    <form onsubmit="return pushMessage()">
+
+			  	    <input id="message" class="material textbox" placeholder="Enter Your Message" autocomplete="off">
+
+			  	    <input id="sendMessage" class="material botao material-icons" type="submit" value="eco">
+
+			    </form>
+
+			    <!-- Timeline -->
+			    <ul id="messages"></ul>
+
+			</center>
+
+		</main>
+	<!-- Body -->
+	<body>
+
+
+			<!-- Scripts -->
+		    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+		    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
+		    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-database.js"></script>
+		    <script type="text/javascript">
+
+		    	// Configs -------------------------------------------------
+			  	var firebaseConfig = {
+
+			  		apiKey: "AIzaSyCWO-Ik0Ttnk-kdmxXcyw3tVa7phql6HoQ",
+
+			  		authDomain: "chatlumb.firebase.com",
+
+			  		databaseURL: "https://chatlumb.firebaseio.com",
+
+			  		projectId: "chatlumb",
+
+			  		storageBucket: "chatlumb.appspot.com",
+
+			  		messagingSenderId: "950288831468",
+
+			  		appId: "1:950288831468:web:15e300db6d80fc8828a6c9"
+
+			  	};
+
+			  	// Conect to the server ---------------------------------------
+			  	firebase.initializeApp(firebaseConfig);
+
+			  	// User name
+			  	var myName = prompt("Enter your name");
+
+			  	// Clear Message
+			  	function clearMessage() {
+
+			  		let message = document.querySelector('input#message');
+
+			  		message.value = '';
+
+			  	};
+
+			  	// Push Message to the server -----------------------------------
+			  	function pushMessage() {
+
+			  		let message = document.getElementById('message').value;
+
+			  		firebase.database().ref("messages").push().set({
+
+			  			"sender": myName,
+
+			  			"message": message
+
+			  		});
+
+			  		clearMessage();
+
+			  		return false;
+
+			  	};
+
+
+			  	// Load Message from the server ----------------------------------
+			  	firebase.database().ref("messages").on("child_added", function(snapshot) {
+
+				  	function verifySender() {
+
+				  		// Minha MSG condicional
+				  		if (snapshot.val().sender == myName){
+
+					  		let html = "";
+
+					  		html += '<li class="my">';
+
+					  		html += snapshot.val().message;
+
+					  		html += '</li><br><br>';
+
+					  		document.getElementById("messages").innerHTML += html;
+
+				  		}
+				  		// Mensagens de outros condicional
+				  		else{
+
+					  		let html = "";
+
+					  		html += '<li class="other">';
+
+					  		html += snapshot.val().sender + ": "
+
+					  		+ snapshot.val().message;
+
+					  		html += '</li><br><br>';
+
+					  		document.getElementById("messages").innerHTML += html;
+				  		}
+				  		
+				  	}
+
+				  	verifySender();
+
+
+			  	});
+
+			  	window.onload = function () {
+
+			  		document.querySelector('input#sendMessage').style.color = '#89428e';
+
+			  	}
+
+		    </script>
+
+
+	</body>
+
 </html>
